@@ -15,9 +15,9 @@
 
 ### **Acknowledgments**
 - **st7789 Driver and fonts:**
--   **Author:** Russ Hughes
--   **HomePage:** https://github.com/russhughes/st7789py_mpy
+-- Author: Russ Hughes
+-- HomePage: https://github.com/russhughes/st7789py_mpy
 
-- **Max30102 Driver:**
--   **Author:** Nicola Elia
--   **HomePage:** https://github.com/n-elia/MAX30102-MicroPython-driver
+- Max30102 Driver:
+--Author: Nicola Elia
+--HomePage: https://github.com/n-elia/MAX30102-MicroPython-driver
