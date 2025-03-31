@@ -1,3 +1,7 @@
+"""
+This file is the example code for the project1: blood oximter 
+"""
+
 #import Pin and SoftI2C class for communication
 from machine import SoftI2C, Pin, SPI
 #import class to control pulse oximeter, import constant for light level
@@ -7,7 +11,6 @@ from time import sleep
 from SpO2Calculators import AcDcCalculator
 #impor NeoPixel class for RGB LEDs
 from neopixel import NeoPixel
-#from system import exit
 import st7789# type: ignore
 from font import vga1_16x32 as font1
 from font import vga2_8x8 as font2
