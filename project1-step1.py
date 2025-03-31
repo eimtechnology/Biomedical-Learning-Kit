@@ -1,3 +1,7 @@
+'''
+This code is the example code for chapter 1.4
+'''
+
 #import Pin and SoftI2C class for communication
 from machine import SoftI2C, Pin, SPI
 #import class to control pulse oximeter, import constant for light level
