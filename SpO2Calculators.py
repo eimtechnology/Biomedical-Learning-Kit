@@ -1,3 +1,7 @@
+"""
+This file is a module for project1
+"""
+
 class AcDcCalculator:
     def __init__(self, threshold_percentage) -> None:
         self.threshold_percentage = threshold_percentage
