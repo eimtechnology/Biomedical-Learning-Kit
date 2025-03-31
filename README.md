@@ -11,6 +11,7 @@
 - **Download all files**
 - Upload fonts files to your microcontroller in **"font"** folder
 - Upload all the files in **"max30102"** to your microcontroller in **"max30102"** folder
+- upload **"SpO2Calculators"** to your microcontroller for **project1**
 - Upload the project example code to your microcontroller and rename it to **"main.py"** to automatically run the code
 
 ### **Acknowledgments**
