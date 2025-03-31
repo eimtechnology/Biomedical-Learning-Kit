@@ -7,7 +7,6 @@ from time import sleep
 from SpO2Calculators import AcDcCalculator
 #impor NeoPixel class for RGB LEDs
 from neopixel import NeoPixel
-#from system import exit
 
 #set adaptive threshold value to 35%
 red_calculator = AcDcCalculator(0.35)
