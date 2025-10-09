@@ -9,7 +9,7 @@ from max30102 import MAX30102, MAX30105_PULSE_AMP_MEDIUM
 from time import sleep
 #import AcDcCalculator class and calculate_SpO2 function
 from SpO2Calculators import AcDcCalculator
-#impor NeoPixel class for RGB LEDs
+#import NeoPixel class for RGB LEDs
 from neopixel import NeoPixel
 
 #set adaptive threshold value to 35%
@@ -100,3 +100,4 @@ while True:
     elif SpO2 > 95:
         rgb_leds.fill((0,16,0))
     rgb_leds.write()
+
