@@ -121,8 +121,9 @@ x_between_points = int(graph_width/(num_of_data_displayed - 1))
 #scroll variable
 cursor = 0
 
-#displays "Average BPM: " texxt
+#displays "Average BPM: " text
 display.text(main_font, "Average BPM: ", 30, 150, st7789.BLACK, bg_color)
+display.text(main_font, "--  ", 30, 190, st7789.BLACK, bg_color) # Initial placeholder
 
 while True:  
     # Reset framebuffer
