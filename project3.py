@@ -32,17 +32,36 @@ bar_height = 200
 
 #draw border for bar
 display.fill_rect(20,15, border_thickness * 2 + bar_width, border_thickness * 2 + bar_height, st7789.BLACK)
-
+smoothed_bar = 0  
 
 while True:
-    muscle_reading = muscle_sensor.read_u16()
-    percentage = muscle_reading / 65536
-    bar_amount = int((percentage * bar_height) * 1)
-    #bar_amount = int(input("type num: "))
-    sleep(0.05)
-    print(bar_amount)
-    #draw dead space
+    min_val = 65535
+    max_val = 0
+    
+    # 1. Fast sampling window: Read 100 times continuously to capture the peaks and valleys of the EMG signal
+    for _ in range(100):
+        val = muscle_sensor.read_u16()
+        if val < min_val: min_val = val
+        if val > max_val: max_val = val
+        # MicroPython loops are fast, no need for sleep here, let it sample at full speed
+        
+    # 2. Calculate amplitude (peak-to-peak): This represents the true AC strength of the muscle output
+    amplitude = max_val - min_val
+    
+    # 3. Calculate percentage and limit the maximum value
+    # Note: You may need to adjust 65536.0 here based on the maximum amplitude of your actual output (e.g., change to 30000.0)
+    percentage = amplitude / 65536.0 
+    if percentage > 1.0: 
+        percentage = 1.0
+        
+    target_bar_amount = int(percentage * bar_height)
+    
+    # 4. Software smoothing filter (Exponential Moving Average - EMA)
+    # 0.15 is the smoothing coefficient. Smaller value = smoother but delayed; Larger value = faster response but more jitter.
+    smoothed_bar = smoothed_bar + 0.15 * (target_bar_amount - smoothed_bar)
+    bar_amount = int(smoothed_bar)
+    
+    # 5. Screen drawing (kept original logic to minimize changes)
+    # Optional optimization: Only redraw when the height changes to further reduce screen flickering
     display.fill_rect(20 + border_thickness, 15 + border_thickness, bar_width, (bar_height - bar_amount) , st7789.WHITE)
     display.fill_rect(20 + border_thickness, 15 + border_thickness + (bar_height - bar_amount), bar_width, bar_amount, st7789.RED)
-   
-    
