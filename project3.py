@@ -6,13 +6,24 @@ from time import sleep
 
 muscle_sensor = ADC(26)
 
-spi = machine.SPI(0, baudrate = 40000000, polarity = 1, sck = Pin(18), mosi = Pin(19))
-reset = Pin(16, Pin.OUT)
-cs = Pin(17, Pin.OUT)
-dc = Pin(21, Pin.OUT)
+WIDTH, HEIGHT = 240, 240
+BACKLIGHT_PIN = 20
+RST_PIN = 16
+DC_PIN = 21
+CS_PIN = 17
+SCK_PIN = 18  # SCK = SCL
+MOSI_PIN = 19 # MOSI = SDA
+SPI_NUM = 0
 
-
-display = ST7789(spi, 240, 240, reset = reset, dc = dc, cs = cs)
+spi = machine.SPI(SPI_NUM, baudrate=31250000, sck=Pin(SCK_PIN), mosi=Pin(MOSI_PIN))
+display = st7789.ST7789(
+    spi, WIDTH, HEIGHT,
+    reset=Pin(RST_PIN, Pin.OUT),
+    cs=Pin(CS_PIN, Pin.OUT),
+    dc=Pin(DC_PIN, Pin.OUT),
+    backlight=Pin(BACKLIGHT_PIN, Pin.OUT),
+    rotation=0,
+)
 
 display.fill(st7789.WHITE)
 border_thickness = 5
@@ -26,7 +37,7 @@ display.fill_rect(20,15, border_thickness * 2 + bar_width, border_thickness * 2 
 while True:
     muscle_reading = muscle_sensor.read_u16()
     percentage = muscle_reading / 65536
-    bar_amount = int((percentage * bar_height) * 3.5)
+    bar_amount = int((percentage * bar_height) * 1)
     #bar_amount = int(input("type num: "))
     sleep(0.05)
     print(bar_amount)
