@@ -54,11 +54,9 @@ rgb_leds = NeoPixel(Pin(23), 4)
 if oximeter.i2c_address not in i2c.scan():
     tft.text(font1,str("Sensor not found."),8,8,st7789.color565(255,0,0))
     print("Sensor not found.")
-    exit()
 elif not oximeter.check_part_id():
     tft.text(font1,str("I2C device ID not corresponding to MAX30102"),8,8,st7789.color565(255,0,0))
     print("I2C device ID not corresponding to MAX30102")
-    exit()
 else:
     tft.text(font1,str("Sensor found, connecting"),8,8,st7789.color565(255,0,0))
     print("Sensor found, connecting")
