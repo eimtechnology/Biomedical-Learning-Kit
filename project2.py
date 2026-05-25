@@ -5,7 +5,7 @@ This file is an example for project2: Electrocardiograms
 from machine import Pin, ADC
 import st7789
 from st7789 import ST7789
-from time import ticks_ms
+from time import ticks_ms, ticks_diff
 from framebuf import FrameBuffer, RGB565
 #files for BPM text font and y axis voltage text font
 from font import vga1_16x32 as main_font
@@ -125,12 +125,10 @@ cursor = 0
 display.text(main_font, "Average BPM: ", 30, 150, st7789.BLACK, bg_color)
 
 while True:  
-    buzzer.value(0)
-    
-    #reset framebuffer
+    # Reset framebuffer
     graph_fbuffer.fill(st7789.WHITE)
     
-    #plot and draw lines of voltages that are in graph_data
+    # Draw the line graph... (keep your original drawing code unchanged here)
     for i in range(num_of_data_displayed - 1):
         graph_fbuffer.line(
                      x_between_points * i - cursor, 
@@ -140,55 +138,39 @@ while True:
                      graph_color
                      )
         
-    #increment scroll variable
     cursor = cursor + 5
     
-    #read voltage from ECG sensor
     signal = ECG_sensor.read_u16()
     voltage = signal * 0.000050354
     
-    #if a heartbeat is detected, and a heartbeat hasn't been detected in the previous cycle (debounce is False)...
     if voltage > heartbeat_threshold and debounce == False:
-        buzzer.value(1)
-        
-        #add the time when we detect a heartbeat to the end of list (note unit of measurment is in miliseconsd)
+        buzzer.value(1) # Heartbeat detected, turn on buzzer
         timestamps.append(ticks_ms())
-            
-        #set debounce to True so the heartbeat doesn't get read multiple times
         debounce = True                
             
-        #if there are 15 elements in the list...
         if len(timestamps) == sample_size:
-                    
-            #subtract the last element from the first to calculate how much time it took to detect 15 beats
-            time_for_sample_size = timestamps[sample_size - 1] - timestamps[0]
-                
-            #calculate unit beats per 1 milisecond, multiply by 60000 to convert to beats per minute
-            average_BPM = sample_size / time_for_sample_size * 60000            
+            # 2. [Fix timing overflow & algorithm] Use ticks_diff to prevent overflow, and modify to use n-1 intervals
+            time_for_sample_size = ticks_diff(timestamps[-1], timestamps[0])
+            average_BPM = (sample_size - 1) / time_for_sample_size * 60000            
                         
-            #update user about BPM
-            display.text(main_font, str(int(average_BPM)), 30, 190, st7789.BLACK, bg_color)
+            # 3. [Fix screen artifacting] Add two spaces after the string to overwrite any potentially remaining previous digits
+            display.text(main_font, str(int(average_BPM)) + "  ", 30, 190, st7789.BLACK, bg_color)
                         
-            #delete the first element
             timestamps.pop(0)         
         
-    #if a heartbeat isn't detected and we just finished reading one (debounce is True)...
-    elif voltage < heartbeat_threshold and debounce == True:
-        #reset the debounce variable
+    # 4. [Add hysteresis] Lower the reset threshold from 3.0V to 2.5V (or lower)
+    elif voltage < 2.5 and debounce == True:
+        buzzer.value(0) # Signal drops, turn off buzzer to create a complete "beep"
         debounce = False
     
+    # Handle graph data scrolling... (keep your original logic unchanged here)
     if cursor >= x_between_points:
-        #reset cursor
         cursor = 0
-        #get rid of oldest point
         graph_data.pop(0)        
-        #scale the voltage we read to the y axis of the graph
         y_point = int(voltage / 3.3 * graph_height)
-        #add y_point to the graph_data, subtract graph_height by y_point to invert the data (spikes go up)
         graph_data.append(graph_height - y_point)
         
-
-    #display framebuffer
+    # display framebuffer... (keep unchanged)
     display.blit_buffer(graph_fbuffer,
                     border_pos[0] + border_thickness,
                     border_pos[1] + border_thickness,
