@@ -1,3 +1,7 @@
+"""
+This file is an example for project2: Electromyography
+"""
+
 from machine import Pin, ADC
 import st7789
 from st7789 import ST7789
